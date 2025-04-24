@@ -1,0 +1,17 @@
+{
+  "serie": "A",
+  "numero": "503",
+  "fecha_expedicion": "23-04-2025",
+  "tipo_factura": "F1",
+  "descripcion": "0105 Articulo 384.05",
+  "nif": "B15001001",
+  "nombre": "Cliente de prueba SL",
+  "lineas": [
+    {
+      "base_imponible": "422.56",
+      "tipo_impositivo": "4.00",
+      "cuota_repercutida": "16.90"
+    }
+  ],
+  "importe_total": "439.46"
+}
