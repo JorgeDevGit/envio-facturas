@@ -8,25 +8,25 @@ public class VerifactuClient {
     private final String baseUrl;
     private final String token;
 
-    public VerifactuClient(String baseUrl, String token) {
+    public VerifactuClient( final String baseUrl, final String token) {
         this.restTemplate = new RestTemplate();
         this.baseUrl = baseUrl;
         this.token = token;
     }
 
-    public ResponseDto sendInvoice(String json) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(token);
-        HttpEntity<String> request = new HttpEntity<>(json, headers);
-        ResponseEntity<ResponseDto> response = restTemplate.exchange(
+    public String sendInvoice( final String json ) {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType( MediaType.APPLICATION_JSON );
+        headers.setBearerAuth( token) ;
+        final HttpEntity< String > request = new HttpEntity<>( json, headers );
+        final ResponseEntity< String > response = restTemplate.exchange(
             baseUrl + "/verifactu/create",
             HttpMethod.POST,
             request,
-            ResponseDto.class
+                String.class
         );
-        if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
-            throw new RuntimeException("HTTP " + response.getStatusCodeValue());
+        if ( response.getStatusCode() != HttpStatus.OK || response.getBody() == null ) {
+            throw new RuntimeException( "HTTP " + response.getStatusCode().value() );
         }
         return response.getBody();
     }

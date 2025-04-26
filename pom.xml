@@ -35,15 +35,6 @@
 
     <build>
         <plugins>
-            <!-- Compiler plugin -->
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
-                <configuration>
-                    <release>17</release>
-                </configuration>
-            </plugin>
-            <!-- Shade plugin to create executable jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -51,8 +42,16 @@
                 <executions>
                     <execution>
                         <phase>package</phase>
-                        <goals><goal>shade</goal></goals>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
                         <configuration>
+                            <!-- Salida del JAR sombreado en la carpeta raíz del proyecto -->
+                            <outputDirectory>${project.basedir}</outputDirectory>
+                            <!-- No adjunta el jar “limpio”, solo deja el sombreado -->
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <!-- Ningún sufijo: el jar resultante se llamará facturas-processor-1.0.0.jar -->
+                            <shadedClassifierName/>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.miempresa.facturas.MainApp</mainClass>

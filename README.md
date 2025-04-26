@@ -4,7 +4,7 @@ Proyecto Java 17 para procesar facturas JSON y enviarlas al servicio Verifactu.
 
 ## Estructura del proyecto
 
-- `ConfigLoader`: carga configuración desde `config.txt`.
+- `ConfigLoader`: carga configuración desde `config/config.txt`.
 - `Config`: representa la configuración leída.
 - `VerifactuClient`: encapsula llamadas REST.
 - `InvoiceProcessor`: maneja lectura JSON, llamada al servicio y movimiento de archivos.
@@ -19,7 +19,7 @@ Proyecto Java 17 para procesar facturas JSON y enviarlas al servicio Verifactu.
 
 ## Configuración
 
-Crear un archivo `config.txt` en el directorio de ejecución con 3 líneas:
+Crear un archivo `config/config.txt` en el directorio de ejecución con 3 líneas:
 
 1. URL base del servicio (p.ej. `https://prewww2.aeat.es/wlpl/TIKE-CONT`)
 2. Carpeta de entrada (donde se ubican los JSON)

@@ -1,0 +1,4 @@
+https://api.verifacti.com
+./facturas/pendientes
+./facturas/procesadas
+./facturas/error

@@ -1,0 +1,36 @@
+<configuration>
+    <!-- 1) Appender de consola -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender que rota cada día y también si supera 10MB -->
+    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- Archivo principal -->
+        <file>logs/app.log</file>
+
+        <!-- Política mixta: rotar cada día y cuando supere 10MB -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- Patrón de nombre de archivos rotados -->
+            <fileNamePattern>logs/app.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <!-- Cada 10MB dentro del mismo día incrementa el índice %i -->
+            <maxFileSize>10MB</maxFileSize>
+            <!-- Conserva como máximo 30 días de logs o 1GB en total -->
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+
+        <encoder>
+            <!-- Formato: fecha hilo nivel logger - mensaje -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Logger raíz a INFO -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ROLLING"/>
+    </root>
+</configuration>
