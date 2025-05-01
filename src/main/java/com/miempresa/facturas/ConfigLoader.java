@@ -10,14 +10,11 @@ public class ConfigLoader {
         // Lee siempre de ./config/config.txt
         final Path cfg = Path.of("config", "config.txt");
         final List< String > lines = Files.readAllLines( cfg, StandardCharsets.UTF_8 );
-        if ( lines.size() < 4 ) {
-            throw new IllegalArgumentException( "config.txt debe tener al menos 4 líneas" );
+        if ( lines.size() < 1 ) {
+            throw new IllegalArgumentException( "config.txt debe tener al menos 1 líneas" );
         }
         return new Config(
-            lines.get( 0 ).trim(),
-            lines.get( 1 ).trim(),
-            lines.get( 2 ).trim(),
-            lines.get( 3 ).trim()
+            lines.get( 0 ).trim()
         );
     }
 }

@@ -7,6 +7,7 @@
     <groupId>com.miempresa.facturas</groupId>
     <artifactId>facturas-processor</artifactId>
     <version>1.0.0</version>
+
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -35,6 +36,7 @@
 
     <build>
         <plugins>
+            <!-- 1) Shade Plugin: empaqueta todas las dependencias en un fat-jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -46,18 +48,55 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <!-- Salida del JAR sombreado en la carpeta raíz del proyecto -->
-                            <outputDirectory>${project.basedir}</outputDirectory>
-                            <!-- No adjunta el jar “limpio”, solo deja el sombreado -->
+                            <!-- Sólo el jar sombreado, sin adjuntar el original -->
                             <shadedArtifactAttached>false</shadedArtifactAttached>
-                            <!-- Ningún sufijo: el jar resultante se llamará facturas-processor-1.0.0.jar -->
-                            <shadedClassifierName/>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.miempresa.facturas.MainApp</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 2) Launch4j Plugin: envuelve el fat-jar en un .exe de consola -->
+            <plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <!-- Nombre y ubicación del EXE resultante -->
+                    <outfile>${project.build.directory}/${project.build.finalName}.exe</outfile>
+                    <!-- Fat-jar generado por Shade -->
+                    <jar>${project.build.directory}/${project.build.finalName}.jar</jar>
+                    <dontWrapJar>false</dontWrapJar>
+                    <!-- Para que abra una consola y veas los logs -->
+                    <headerType>console</headerType>
+
+                    <!-- Aquí va la MainClass, dentro de classPath -->
+                    <classPath>
+                        <mainClass>com.miempresa.facturas.MainApp</mainClass>
+                    </classPath>
+
+                    <!-- JRE mínimo y opciones JVM -->
+                    <jre>
+                        <minVersion>17</minVersion>
+                        <opts>
+                            <opt>-Xmx512m</opt>
+                        </opts>
+                    </jre>
+
+                    <!-- (Opcional) Icono Windows -->
+                    <!-- <icon>src/main/resources/app.ico</icon> -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>wrap-exe</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>launch4j</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

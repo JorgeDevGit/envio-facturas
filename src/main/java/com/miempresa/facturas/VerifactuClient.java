@@ -5,12 +5,12 @@ import org.springframework.web.client.RestTemplate;
 
 public class VerifactuClient {
     private final RestTemplate restTemplate;
-    private final String baseUrl;
+    private final String urlService;
     private final String token;
 
-    public VerifactuClient( final String baseUrl, final String token) {
+    public VerifactuClient( final String urlService, final String token) {
         this.restTemplate = new RestTemplate();
-        this.baseUrl = baseUrl;
+        this.urlService = urlService;
         this.token = token;
     }
 
@@ -19,12 +19,8 @@ public class VerifactuClient {
         headers.setContentType( MediaType.APPLICATION_JSON );
         headers.setBearerAuth( token) ;
         final HttpEntity< String > request = new HttpEntity<>( json, headers );
-        final ResponseEntity< String > response = restTemplate.exchange(
-            baseUrl + "/verifactu/create",
-            HttpMethod.POST,
-            request,
-                String.class
-        );
+        final ResponseEntity< String > response = restTemplate.exchange( urlService,
+                HttpMethod.POST, request, String.class);
         if ( response.getStatusCode() != HttpStatus.OK || response.getBody() == null ) {
             throw new RuntimeException( "HTTP " + response.getStatusCode().value() );
         }

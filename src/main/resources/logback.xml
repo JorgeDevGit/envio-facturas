@@ -14,7 +14,7 @@
         <!-- Política mixta: rotar cada día y cuando supere 10MB -->
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- Patrón de nombre de archivos rotados -->
-            <fileNamePattern>logs/app.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <fileNamePattern>logs/app.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <!-- Cada 10MB dentro del mismo día incrementa el índice %i -->
             <maxFileSize>10MB</maxFileSize>
             <!-- Conserva como máximo 30 días de logs o 1GB en total -->
