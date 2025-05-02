@@ -1,4 +1,4 @@
 package com.miempresa.facturas;
 
-public record Config( String urlService ) {
+public record Config( String urlService, String appPath ) {
 }

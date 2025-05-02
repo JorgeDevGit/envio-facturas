@@ -1,6 +1,5 @@
 package com.miempresa.facturas;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,35 +12,35 @@ public class InvoiceProcessor {
     private static final Logger logger = LoggerFactory.getLogger(InvoiceProcessor.class);
 
     // 1) Rutas "hardcodeadas" en atributos estáticos
-    private static final Path PENDING_DIR   = Paths.get("./facturas/pendientes");
-    private static final Path PROCESSED_DIR = Paths.get("./facturas/procesadas");
-    private static final Path ERROR_DIR     = Paths.get("./facturas/error");
+    private final Path pendingDir;
+    private final Path processedDir;
+    private final Path errorDir;
     private static final String RESPONSE_TAG = "_respuesta";  // sufijo para el JSON de respuesta
     private static final String ERROR_TAG    = "_error.txt";  // sufijo para el .txt de error
 
     private final VerifactuClient client;
 
-    public InvoiceProcessor( final VerifactuClient client ) {
+    public InvoiceProcessor( final String appPath, final VerifactuClient client ) {
         this.client = client;
+        this.pendingDir = Paths.get( appPath.concat("/facturas/pendientes" ) );
+        this.processedDir = Paths.get( appPath.concat("/facturas/procesadas" ) );
+        this.errorDir = Paths.get( appPath.concat("/facturas/error" ) );
     }
 
     public int process( final String fileName ) {
-        final Path pending = PENDING_DIR.resolve( fileName );
+        logger.info( "\n===== INICIO PROCESO FACTURA {} =====", fileName );
+        final Path pending = pendingDir.resolve( fileName );
         try {
             // 1) Leer el JSON original
             final String originalJson = Files.readString( pending, StandardCharsets.UTF_8 );
 
             // 2) Enviar y obtener la respuesta cruda
-            final String responseJson = client.sendInvoice( originalJson );
+            final String responseJson = client.callRestService( originalJson );
 
-            // 3) (Opcional) deserializar para loguear estado/uuid/url
-            final ResponseDto dto = new ObjectMapper()
-                    .readValue( responseJson, ResponseDto.class );
-            logger.info("Factura {} enviada: estado={}, uuid={}, url={}",
-                    fileName, dto.getEstado(), dto.getUuid(), dto.getUrl());
+            logger.info( "Json con la respuesta: {}", responseJson );
 
             // 4) Copiar el archivo original a "procesadas"
-            final Path processedOriginal = PROCESSED_DIR.resolve( fileName );
+            final Path processedOriginal = processedDir.resolve( fileName );
             Files.copy( pending, processedOriginal, StandardCopyOption.REPLACE_EXISTING );
 
             // 5) Crear un nuevo JSON con la respuesta:
@@ -49,22 +48,26 @@ public class InvoiceProcessor {
                     ? fileName.substring( 0, fileName.length() - 5 )
                     : fileName;
             final String respName = base + RESPONSE_TAG + ".json";
-            final Path processedResponse = PROCESSED_DIR.resolve( respName );
+            final Path processedResponse = processedDir.resolve( respName );
             Files.writeString( processedResponse, responseJson, StandardCharsets.UTF_8 );
 
             // 6) Borrar el original de "pendientes"
             Files.delete( pending );
 
-            logger.info("{} copiado y respuesta en {}", fileName, respName );
+            logger.info( "{} copiado y respuesta en {}", fileName, respName );
+            logger.info( "----- PROCESADO CORRECTO: {} -----", fileName );
+            logger.info( "\n===== FIN PROCESO FACTURA {} =====\n", fileName );
             return 0;
 
         } catch ( final RuntimeException e ) {
             logger.error( "Error HTTP enviando {}: {}", fileName, e.getMessage() );
             moveToError(fileName, e.getMessage());
+            logger.info( "\n===== FIN PROCESO FACTURA {} =====\n", fileName );
             return 2;
         } catch ( final Exception e ) {
             logger.error("Error procesando {}: {}", fileName, e.getMessage(), e);
             moveToError(fileName, e.getMessage());
+            logger.info( "\n===== FIN PROCESO FACTURA {} =====\n", fileName );
             return 1;
         }
     }
@@ -75,32 +78,32 @@ public class InvoiceProcessor {
             final String base = fileName.endsWith( ".json" )
                     ? fileName.substring(0, fileName.length() - 5)
                     : fileName;
-            // 2) Timestamp único para este intento
+            // 2) Timestamp unico para este intento
             final String timestamp = LocalDateTime.now()
                     .format( DateTimeFormatter.ofPattern("yyyyMMddHHmmss" ) );
 
             // 3) Copia del JSON con sufijo _yyyyMMddHHmmss.json
             final String errJsonName = base + "_" + timestamp + ".json";
             Files.copy(
-                    PENDING_DIR.resolve( fileName ),
-                    ERROR_DIR.resolve( errJsonName ),
+                    pendingDir.resolve( fileName ),
+                    errorDir.resolve( errJsonName ),
                     StandardCopyOption.REPLACE_EXISTING
             );
 
-            // 4) Creación del .txt con sufijo _yyyyMMddHHmmss_error.txt
-            final String errTxtName = base + "_" + timestamp + "_error.txt";
-            final Path txtPath = ERROR_DIR.resolve( errTxtName );
+            // 4) Creacion del .txt con sufijo _yyyyMMddHHmmss_error.txt
+            final String errTxtName = base + "_" + timestamp + ERROR_TAG;
+            final Path txtPath = errorDir.resolve( errTxtName );
             final String content = "Error procesando " + fileName + ":\n" + errorMsg;
-            Files.writeString(txtPath, content, StandardCharsets.UTF_8);
+            Files.writeString( txtPath, content, StandardCharsets.UTF_8 );
 
             // 5) Borrar el original de pendientes
-            Files.delete( PENDING_DIR.resolve( fileName ) );
+            Files.delete( pendingDir.resolve( fileName ) );
 
-            logger.warn( "Factura {} movida a error como {} y log en {}",
+            logger.warn( "Factura {} movida a /error como {} y log en {}",
                     fileName, errJsonName, errTxtName );
 
-        } catch (Exception ex) {
-            logger.error( "No se pudo mover {} a error: {}", fileName, ex.getMessage(), ex );
+        } catch ( final Exception ex ) {
+            logger.error( "No se pudo mover {} a /error: {}", fileName, ex.getMessage(), ex );
         }
     }
 

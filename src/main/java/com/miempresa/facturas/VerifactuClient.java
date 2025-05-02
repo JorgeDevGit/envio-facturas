@@ -14,7 +14,7 @@ public class VerifactuClient {
         this.token = token;
     }
 
-    public String sendInvoice( final String json ) {
+    public String callRestService( final String json ) {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType( MediaType.APPLICATION_JSON );
         headers.setBearerAuth( token) ;

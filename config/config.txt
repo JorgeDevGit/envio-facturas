@@ -1,1 +1,2 @@
-https://api.verifacti.com/verifactu/create
+https://api.verifacti.com/verifactu/status
+E:/workspace/envio-facturas

@@ -17,7 +17,7 @@ public class MainApp {
         try {
             final Config config = ConfigLoader.load( );
             final VerifactuClient client = new VerifactuClient( config.urlService(), TOKEN );
-            final InvoiceProcessor processor = new InvoiceProcessor( client );
+            final InvoiceProcessor processor = new InvoiceProcessor( config.appPath(), client );
             final int result = processor.process( jsonFileName );
             System.exit( result );
         } catch ( Exception e ) {
