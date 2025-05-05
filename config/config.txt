@@ -1,2 +1,0 @@
-https://api.verifacti.com/verifactu/status
-E:/workspace/envio-facturas

@@ -83,11 +83,13 @@
                     <classPath>
                         <mainClass>com.miempresa.facturas.MainApp</mainClass>
                     </classPath>
-
+                    <chdir>.</chdir>
                     <!-- JRE mínimo y opciones JVM -->
                     <jre>
                         <minVersion>17</minVersion>
                         <opts>
+                            <!-- 2) Di a Logback que cargue el XML externo -->
+                            <opt>-Dlogback.configurationFile=logback.xml</opt>
                             <opt>-Xmx512m</opt>
                         </opts>
                     </jre>

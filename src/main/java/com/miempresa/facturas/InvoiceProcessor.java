@@ -39,11 +39,11 @@ public class InvoiceProcessor {
 
             logger.info( "Json con la respuesta: {}", responseJson );
 
-            // 4) Copiar el archivo original a "procesadas"
+            // 3) Copiar el archivo original a "procesadas"
             final Path processedOriginal = processedDir.resolve( fileName );
             Files.copy( pending, processedOriginal, StandardCopyOption.REPLACE_EXISTING );
 
-            // 5) Crear un nuevo JSON con la respuesta:
+            // 4) Crear un nuevo JSON con la respuesta:
             final String base = fileName.endsWith(".json")
                     ? fileName.substring( 0, fileName.length() - 5 )
                     : fileName;
@@ -51,7 +51,7 @@ public class InvoiceProcessor {
             final Path processedResponse = processedDir.resolve( respName );
             Files.writeString( processedResponse, responseJson, StandardCharsets.UTF_8 );
 
-            // 6) Borrar el original de "pendientes"
+            // 5) Borrar el original de "pendientes"
             Files.delete( pending );
 
             logger.info( "{} copiado y respuesta en {}", fileName, respName );
