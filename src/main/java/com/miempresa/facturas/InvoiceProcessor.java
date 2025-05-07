@@ -82,11 +82,10 @@ public class InvoiceProcessor {
             final String timestamp = LocalDateTime.now()
                     .format( DateTimeFormatter.ofPattern("yyyyMMddHHmmss" ) );
 
-            // 3) Copia del JSON con sufijo _yyyyMMddHHmmss.json
-            final String errJsonName = base + "_" + timestamp + ".json";
+            // 3) Copia del JSON original a la carpeta error
             Files.copy(
                     pendingDir.resolve( fileName ),
-                    errorDir.resolve( errJsonName ),
+                    errorDir.resolve( fileName ),
                     StandardCopyOption.REPLACE_EXISTING
             );
 
@@ -97,6 +96,7 @@ public class InvoiceProcessor {
             Files.writeString( txtPath, content, StandardCharsets.UTF_8 );
 
             // 5) Borrar el original de pendientes
+            final String errJsonName = base + "_" + timestamp + ".json";
             Files.delete( pendingDir.resolve( fileName ) );
 
             logger.warn( "Factura {} movida a /error como {} y log en {}",
