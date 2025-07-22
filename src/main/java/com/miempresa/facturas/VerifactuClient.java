@@ -31,9 +31,10 @@ public class VerifactuClient {
                 request,
                 String.class );
 
-        if ( response.getStatusCode() != HttpStatus.OK || response.getBody() == null ) {
+        if ( response.getStatusCode() != HttpStatus.OK ) {
             throw new RuntimeException( "HTTP " + response.getStatusCode().value() );
         }
         return response.getBody();
     }
+
 }

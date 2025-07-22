@@ -28,4 +28,7 @@ mvn clean package
 
 ```bash
 facturas-processor-1.0.0.exe <rutaBase> <serviceUrl> <jsonFile>
+facturas-processor-1.0.0.exe "C:\Proyectos\facturas" https://api.verifacti.com/verifactu/create A000106.json
+facturas-processor-1.0.0.exe "C:\Proyectos\facturas" https://api.verifacti.com/verifactu/status A000340.json
+
 ```
