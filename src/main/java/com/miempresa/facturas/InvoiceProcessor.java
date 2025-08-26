@@ -2,9 +2,6 @@ package com.miempresa.facturas;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -26,9 +23,9 @@ public class InvoiceProcessor {
 
     public InvoiceProcessor(final String appPath, final VerifactuClient client) {
         this.client = client;
-        this.pendingDir = Paths.get(appPath.concat("/facturas/pendientes"));
-        this.processedDir = Paths.get(appPath.concat("/facturas/procesadas"));
-        this.errorDir = Paths.get(appPath.concat("/facturas/error"));
+        this.pendingDir   = Paths.get( appPath, "facturas", "pendientes" );
+        this.processedDir = Paths.get( appPath, "facturas", "procesadas" );
+        this.errorDir     = Paths.get( appPath, "facturas", "error" );
     }
 
     /**
@@ -57,7 +54,7 @@ public class InvoiceProcessor {
 
         try {
             // 1) Leer JSON original
-            final String originalJson = Files.readString(pending, StandardCharsets.UTF_8);
+            final String originalJson = readJson ( pending );
 
             // 2) Enviar y capturar excepciones HTTP
             final String responseJson = client.callRestService(originalJson);
@@ -87,6 +84,20 @@ public class InvoiceProcessor {
 
         } finally {
             logger.info( "===== FIN PROCESO FACTURA {} =====", fileName );
+        }
+    }
+
+    private String readJson( final Path path ) throws Exception {
+        try {
+            // UTF-8 estricto: que falle si ve bytes inválidos
+            return StandardCharsets.UTF_8
+                    .newDecoder()
+                    .onMalformedInput( java.nio.charset.CodingErrorAction.REPORT )
+                    .decode( java.nio.ByteBuffer.wrap( java.nio.file.Files.readAllBytes( path ) ) )
+                    .toString();
+        } catch ( java.nio.charset.CharacterCodingException ex ) {
+            // Fallback a Windows-1252
+            return java.nio.file.Files.readString( path, java.nio.charset.Charset.forName( "Windows-1252" ) );
         }
     }
 

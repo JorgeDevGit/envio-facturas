@@ -27,8 +27,8 @@ mvn clean package
 ## Uso
 
 ```bash
-facturas-processor-1.0.0.exe <rutaBase> <serviceUrl> <jsonFile>
-facturas-processor-1.0.0.exe "C:\Proyectos\facturas" https://api.verifacti.com/verifactu/create A000106.json
-facturas-processor-1.0.0.exe "C:\Proyectos\facturas" https://api.verifacti.com/verifactu/status A000340.json
+facturas-processor-1.0.0.exe <rutaBase> <serviceUrl> <jsonFile> <token>
+facturas-processor-1.0.0.exe "C:\Proyectos\facturas" https://api.verifacti.com/verifactu/create PF001-8.json vf_test_OKJV2MjUOY7UncNkcycWnjaFQzb5jjZybN8U0jWr9qs=
+facturas-processor-1.0.0.exe "C:\Proyectos\facturas" https://api.verifacti.com/verifactu/status A000340.json vf_test_OKJV2MjUOY7UncNkcycWnjaFQzb5jjZybN8U0jWr9qs=
 
 ```

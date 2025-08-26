@@ -12,27 +12,25 @@ import java.nio.file.Paths;
 
 public class MainApp {
 
-    private static final String TOKEN = "vf_test_OKJV2MjUOY7UncNkcycWnjaFQzb5jjZybN8U0jWr9qs=";
-    //private static final Logger logger = LoggerFactory.getLogger( MainApp.class );
     public static void main( final String[] args ) {
-        if ( args.length != 3 ) {
-            System.err.println("Uso: facturas-processor-1.0.0.exe <rutaBase> <serviceUrl> <jsonFile>");
+        if ( args.length != 4 ) {
+            System.err.println("Uso: facturas-processor-1.0.0.exe <rutaBase> <serviceUrl> <jsonFile> <token>");
             System.exit(1);
         }
         final String baseDir = args[0];
         final String serviceUrl = args[1];
         final String jsonFileName = args[2];
+        final String token = args[3];
 
         // Configure logging antes de cualquier logger
         configureLogging(baseDir);
 
         try {
-            final VerifactuClient client = new VerifactuClient( serviceUrl, TOKEN );
+            final VerifactuClient client = new VerifactuClient( serviceUrl, token );
             final InvoiceProcessor processor = new InvoiceProcessor( baseDir, client );
             final int result = processor.process( jsonFileName );
             System.exit( result );
-        } catch ( Exception e ) {
-            //logger.error( "Error en la aplicación: {}", e.getMessage(), e );
+        } catch ( final Exception e ) {
             System.exit(1 );
         }
     }
